@@ -1,9 +1,17 @@
 using Globomantics.Domain.Models;
 using Globomantics.Infrastructure.Data;
 using Globomatics.Infrastructure.Repositories;
+using Globomatics.Web.Constraints;
+using Globomatics.Web.Transformers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddRouting(options =>
+{
+    options.ConstraintMap["validateSlug"] = typeof(SlugConstraint);
+    options.ConstraintMap["slugTransform"] = typeof(SlugParameterTransformer);
+});
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<GlobomanticsContext>();

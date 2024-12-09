@@ -3,6 +3,7 @@ using Globomatics.Infrastructure.Repositories;
 using Globomatics.Web.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
@@ -26,9 +27,15 @@ public class HomeController : Controller
         return View(products);
     }
 
-    [Route("/details/{productId}/{slug}")]
-    public IActionResult TicketDetails(Guid productId, string slug)
+    [Route("/details/{productId:guid}/{slug:slugTransform}")]
+    public IActionResult TicketDetails(Guid productId,
+        [RegularExpression("^[a-zA-Z0-9- ]+$")] string slug)
+    
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
         var product = repos.Get(productId);
         return View(product);
     }
