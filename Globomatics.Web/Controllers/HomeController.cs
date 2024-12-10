@@ -22,9 +22,7 @@ public class HomeController : Controller
     }
     public IActionResult Index()
     {
-        var products = repos.All();
-        logger.LogInformation($"displaying {products.Count()} products");
-        return View(products);
+        return View();
     }
 
     [Route("/details/{productId:guid}/{slug:slugTransform}")]
