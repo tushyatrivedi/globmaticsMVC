@@ -1,6 +1,10 @@
 ﻿@using Globomantics.Domain.Models;
+@using Globomatics.Infrastructure.Repositories
 @model IEnumerable<Product>
-
+@inject IStateRepository state
+@{
+Console.WriteLine($"From Home controller's Index view CartId: {state.GetValue("CartId")}");
+}
 
 <table class="table">
     <caption>Last updated @DateTimeOffset.UtcNow.ToString("R")</caption>
@@ -35,6 +39,7 @@
                 <td>
                     <form asp-controller="Cart" asp-action="Add">
                         <input type="hidden" name="product.productId" value="@product.ProductId" />
+                        <input type="hidden" name="cartId" value="@state.GetValue("CartId")" />
                         <input type="submit" value="Add to cart" class="btn btn-primary" />
                     </form>
                 </td>

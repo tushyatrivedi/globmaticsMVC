@@ -39,6 +39,10 @@ public class CartController : Controller
             return BadRequest();
         }
 
+        //fetching cartId manually from session
+        //Guid.TryParse(stateRepository.GetValue("CartId"),out var id);
+        //addToCartModel.CartId = id;
+
         logger.LogInformation($"Attempting to add {addToCartModel.Product.ProductId} to cart {addToCartModel.CartId}");
 
         var cart = cartRepository.CreateOrUpdate(addToCartModel.CartId, addToCartModel.Product.ProductId);
@@ -64,6 +68,9 @@ public class CartController : Controller
         }
 
         Cart cart = null!;
+
+        Guid.TryParse(stateRepository.GetValue("CartId"),out var id);
+        updateQuantitiesModel.CartId=id;
 
         foreach (var product in updateQuantitiesModel.Products)
         {
@@ -123,6 +130,9 @@ public class CartController : Controller
             CustomerId = customer.CustomerId
         };
 
+        Guid.TryParse(stateRepository.GetValue("CartId"),out var id);
+        createOrderModel.CartId = id;
+
         //need to check cart associated with user's session 
         if (createOrderModel.CartId == null || createOrderModel.CartId == Guid.Empty)
         {
@@ -130,7 +140,7 @@ public class CartController : Controller
             return View("Index");
         }
 
-        var cart = cartRepository.Get(createOrderModel.CartId.Value);
+        var (cart,isNew) = cartRepository.GetCart(createOrderModel.CartId.Value);
 
         if (cart == null)
         {

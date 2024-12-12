@@ -29,7 +29,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
         return cart;
     }
 
-    private (Cart cart, bool isNewCart) GetCart(Guid? cartId)
+    public (Cart cart, bool isNewCart) GetCart(Guid? cartId)
     {
         Cart? cart = null;
         bool isNewCart = false;
