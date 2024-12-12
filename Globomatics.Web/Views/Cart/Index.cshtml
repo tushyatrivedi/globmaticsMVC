@@ -1,4 +1,6 @@
-﻿@using Globomantics.Domain.Models;
+﻿@inject IStateRepository state
+@using Globomantics.Domain.Models;
+@using Globomatics.Infrastructure.Repositories
 
 @model Cart
 @{
@@ -8,7 +10,8 @@
     <div class="col-md-9">
         <div class="card">
             <div class="card-body">
-                TBA - Shopping cart
+             @await Component.InvokeAsync("ShoppingCart",
+             new {cartId=state.GetValue("CartId"),isCompact=false})
             </div>
         </div>
     </div>

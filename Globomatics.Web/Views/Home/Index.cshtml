@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Globomatics.Infrastructure.Repositories
+@inject IStateRepository state
+@{
     ViewData["Title"] = "Home";
 }
 
@@ -8,7 +10,7 @@
             <div class="card-body">
                 TBA: Product List
                 <h5 class="card-title">Available events</h5>
-             @await Component.InvokeAsync("ProductList");
+             @await Component.InvokeAsync("ProductList")
              @* <vc:product-list></vc:product-list> *@
             </div>
         </div>
@@ -16,7 +18,8 @@
     <div class="col-sm-5">
         <div class="card">
             <div class="card-body">
-                TBA: Shopping Cart
+                @await Component.InvokeAsync("ShoppingCart",
+                new{cartId=state.GetValue("CartId"),isCompact=true})
             </div>
         </div>
     </div>
