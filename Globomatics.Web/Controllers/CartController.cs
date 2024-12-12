@@ -12,16 +12,16 @@ public class CartController : Controller
     private readonly ICartRepository cartRepository;
     private readonly IRepository<Customer> customerRepository;
     private readonly IRepository<Order> orderRepository;
-    private readonly IRepository<Product> productRepository;
+    private readonly IStateRepository stateRepository;
 
-    public CartController(ILogger<CartController> logger, ICartRepository cartRepository, IRepository<Customer> customerRepository, IRepository<Order> orderRepository,
-        IRepository<Product> productRepository)
+    public CartController(ILogger<CartController> logger, ICartRepository cartRepository, IRepository<Customer> customerRepository, IRepository<Order> orderRepository,IStateRepository stateRepository
+        )
     {
         this.logger = logger;
         this.cartRepository = cartRepository;
         this.customerRepository = customerRepository;
         this.orderRepository = orderRepository;
-        this.productRepository = productRepository;
+        this.stateRepository = stateRepository;
     }
 
     [Route("Index")]
@@ -43,12 +43,18 @@ public class CartController : Controller
 
         var cart = cartRepository.CreateOrUpdate(addToCartModel.CartId, addToCartModel.Product.ProductId);
 
+        //store the cart for further use
+        stateRepository.SetValue("NumberOfItems", cart.LineItems.Sum(item=>item.Quantity).ToString());
+        stateRepository.SetValue("CartId",cart.CartId.ToString());  
+
         cartRepository.SaveChanges();
 
         return RedirectToAction("Index", "Cart");
     }
 
     [HttpPost]
+    [Route("Update")]
+    [ValidateAntiForgeryToken]
     public IActionResult Update(UpdateQuantitiesModel updateQuantitiesModel)
     {
         var item = HttpContext.Request.Form;
@@ -64,6 +70,9 @@ public class CartController : Controller
             logger.LogInformation($"adding {product.ProductId} to cart {updateQuantitiesModel.CartId}");
             cart = cartRepository.CreateOrUpdate(updateQuantitiesModel.CartId, product.ProductId, product.Quantity);
         }
+        //store the cart for further use
+        stateRepository.SetValue("NumberOfItems", cart.LineItems.Sum(item => item.Quantity).ToString());
+        stateRepository.SetValue("CartId", cart.CartId.ToString());
 
         cartRepository.SaveChanges();
         return RedirectToAction("Index");
@@ -71,6 +80,7 @@ public class CartController : Controller
 
     [HttpPost]
     [Route("Finalize")]
+    [ValidateAntiForgeryToken]
     public IActionResult Create(CreateOrderModel createOrderModel)
     {
         if (!ModelState.IsValid)
@@ -113,6 +123,7 @@ public class CartController : Controller
             CustomerId = customer.CustomerId
         };
 
+        //need to check cart associated with user's session 
         if (createOrderModel.CartId == null || createOrderModel.CartId == Guid.Empty)
         {
             ModelState.AddModelError("Cart", "Cart has been deleted");
@@ -133,9 +144,12 @@ public class CartController : Controller
         }
 
         orderRepository.Add(order);
-        //todo - remove cart? since order has been created?
         cartRepository.Update(cart);
         cartRepository.SaveChanges();
+
+        stateRepository.Remove("NumberOfItems");
+        stateRepository.Remove("CartId");
+
         logger.LogInformation($"Order placed for Customer {customer.Name}");   
 
         return RedirectToAction("ThankYou");

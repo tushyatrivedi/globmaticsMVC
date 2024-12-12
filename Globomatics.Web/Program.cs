@@ -2,10 +2,14 @@ using Globomantics.Domain.Models;
 using Globomantics.Infrastructure.Data;
 using Globomatics.Infrastructure.Repositories;
 using Globomatics.Web.Constraints;
+using Globomatics.Web.Repositories;
 using Globomatics.Web.Transformers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddRouting(options =>
 {
@@ -21,6 +25,7 @@ builder.Services.AddTransient<IRepository<Customer>, CustomerRepository>();
 builder.Services.AddTransient<IRepository<Product>, ProductRepository>();
 builder.Services.AddTransient<IRepository<Order>, OrderRepository>();
 builder.Services.AddTransient<ICartRepository, CartRepository>();
+builder.Services.AddTransient<IStateRepository,SessionStateRepository>();   
 
 var app = builder.Build();
 
@@ -36,6 +41,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
