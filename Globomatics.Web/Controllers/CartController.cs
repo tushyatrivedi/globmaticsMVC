@@ -160,8 +160,8 @@ public class CartController : Controller
         stateRepository.Remove("NumberOfItems");
         stateRepository.Remove("CartId");
 
-        logger.LogInformation($"Order placed for Customer {customer.Name}");   
-
+        logger.LogInformation($"Order placed for Customer {customer.Name}");
+        TempData["successMessage"] = "Order created successfully";
         return RedirectToAction("ThankYou");
     }
 

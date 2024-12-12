@@ -1,1 +1,5 @@
-﻿Thank you for shopping!!Hope you visit again!!
+﻿@if (TempData["successMessage"] != string.Empty)
+{
+	<h4 class="text-success">@TempData["successMessage"]</h4>
+}
+Thank you for shopping!!Hope you visit again!!
