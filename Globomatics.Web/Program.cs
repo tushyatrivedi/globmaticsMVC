@@ -4,6 +4,7 @@ using Globomatics.Infrastructure.Repositories;
 using Globomatics.Web.Constraints;
 using Globomatics.Web.Repositories;
 using Globomatics.Web.Transformers;
+using Globomatics.Web.ValueProviders;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +18,10 @@ builder.Services.AddRouting(options =>
     options.ConstraintMap["slugTransform"] = typeof(SlugParameterTransformer);
 });
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.ValueProviderFactories.Add(new SessionValueProviderFactory());  
+});
 builder.Services.AddDbContext<GlobomanticsContext>();
 
 builder.Services.AddTransient<IRepository<Cart>, CartRepository>();

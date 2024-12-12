@@ -69,8 +69,8 @@ public class CartController : Controller
 
         Cart cart = null!;
 
-        Guid.TryParse(stateRepository.GetValue("CartId"),out var id);
-        updateQuantitiesModel.CartId=id;
+        //Guid.TryParse(stateRepository.GetValue("CartId"),out var id);
+        //updateQuantitiesModel.CartId=id;
 
         foreach (var product in updateQuantitiesModel.Products)
         {
@@ -130,8 +130,8 @@ public class CartController : Controller
             CustomerId = customer.CustomerId
         };
 
-        Guid.TryParse(stateRepository.GetValue("CartId"),out var id);
-        createOrderModel.CartId = id;
+        //Guid.TryParse(stateRepository.GetValue("CartId"),out var id);
+        //createOrderModel.CartId = id;
 
         //need to check cart associated with user's session 
         if (createOrderModel.CartId == null || createOrderModel.CartId == Guid.Empty)
