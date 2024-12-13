@@ -1,10 +1,12 @@
 ﻿using Globomantics.Domain.Models;
 using Globomatics.Infrastructure.Repositories;
+using Globomatics.Web.Attributes;
 using Globomatics.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Globomatics.Web.Controllers;
 
+[TimerFilter]
 [Route("[controller]")]
 public class CartController : Controller
 {
@@ -24,12 +26,14 @@ public class CartController : Controller
         this.stateRepository = stateRepository;
     }
 
+    [TimerFilter]
     [Route("Index")]
     public IActionResult Index(Guid? id)
     {
         return View();
     }
 
+    [TimerFilter]
     [HttpPost]
     [Route("Add")]
     public IActionResult AddToCart(AddToCartModel addToCartModel)
@@ -55,7 +59,7 @@ public class CartController : Controller
 
         return RedirectToAction("Index", "Cart");
     }
-
+    [TimerFilter]
     [HttpPost]
     [Route("Update")]
     [ValidateAntiForgeryToken]
@@ -85,6 +89,7 @@ public class CartController : Controller
         return RedirectToAction("Index");
     }
 
+    [TimerFilter]
     [HttpPost]
     [Route("Finalize")]
     [ValidateAntiForgeryToken]
@@ -165,6 +170,7 @@ public class CartController : Controller
         return RedirectToAction("ThankYou");
     }
 
+    [TimerFilter]
     [HttpGet("ThankYou")]
     public IActionResult ThankYou()
     {
