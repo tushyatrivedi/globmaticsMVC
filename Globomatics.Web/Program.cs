@@ -2,6 +2,7 @@ using Globomantics.Domain.Models;
 using Globomantics.Infrastructure.Data;
 using Globomatics.Infrastructure.Repositories;
 using Globomatics.Web.Constraints;
+using Globomatics.Web.Filters;
 using Globomatics.Web.Repositories;
 using Globomatics.Web.Transformers;
 using Globomatics.Web.ValueProviders;
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<TimerFilter>();
 
 builder.Services.AddRouting(options =>
 {
